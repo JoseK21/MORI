@@ -23,6 +23,9 @@ export class DashboardComponent implements OnInit {
   public kilometers_: any = "0";
   public cars_: any = "0";
   public emission_total_: any = "0";
+  public mileage_: any = "0";
+  public litros_: any = "0";
+  
 
   public FE: any = "0";
 
@@ -30,10 +33,35 @@ export class DashboardComponent implements OnInit {
   constructor(private service: ServiceService, private http: HttpClient) { }
 
   ngOnInit() {
-
-    this.onSubmit();
-    this.get_factor();
     
+    let timerInterval
+    Swal.fire({
+      title: 'MORI',
+      html:
+        'Getting the data, please wait <strong></strong> seconds.<br/><br/>',
+      timer: 2000,
+      onBeforeOpen: () => {
+        const content = Swal.getContent()
+        const $ = content.querySelector.bind(content)
+        Swal.showLoading()
+        timerInterval = setInterval(() => {
+          Swal.getContent().querySelector('strong')
+            .textContent = (Swal.getTimerLeft() / 1000)
+              .toFixed(0)
+        }, 100)
+        
+      },
+      onClose: () => {
+        this.get_factor();
+
+        this.onSubmit();
+        clearInterval(timerInterval)
+      }
+    }) 
+
+   
+    
+
     var gradientChartOptionsConfigurationWithTooltipBlue: any = {
       maintainAspectRatio: false,
       legend: {
@@ -323,14 +351,27 @@ export class DashboardComponent implements OnInit {
       }
     };
 
-  
+
     var chart_labels = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-    this.datasets = [
-      [100, 70, 90, 70, 85, 60, 75, 60, 90, 80, 110, 100],
-      [80, 120, 105, 110, 95, 105, 90, 100, 80, 95, 70, 120],
-      [60, 80, 65, 130, 80, 105, 90, 130, 70, 115, 60, 130]
-    ];
-    this.data = this.datasets[0];
+
+
+    this.data = this.mileage_; 
+
+    var ar = this.mileage_.split(',');
+    console.log('>>>>>datas mes>>>>> '+ar);
+    
+   /*  var ar = this.mileage_.split(',');
+
+    console.log('>>>>>>>>>> '+ar[3]);
+    
+
+    for (let index = 0; index < ar.length; index++) {
+      this.datasets = ar[index];      
+    }
+    this.data = this.datasets ; */
+
+    this.datasets = [100, 70, 90, 70, 85, 60, 75, 60, 100];
+    this.data = this.datasets; 
 
 
 
@@ -348,7 +389,7 @@ export class DashboardComponent implements OnInit {
       data: {
         labels: chart_labels,
         datasets: [{
-          label: "My First dataset",
+          label: "",
           fill: true,
           backgroundColor: gradientStroke,
           borderColor: '#ec250d',
@@ -378,17 +419,12 @@ export class DashboardComponent implements OnInit {
   };
 
 
-
+  // Get a company
   async onSubmit() {
-
     var json = '{ "name" : "Lumaca" }';
-
     this.http
       .post<any>('http://localhost:3000/company', json, this.httpOptions)
       .subscribe(data => {
-
-        console.log(data);
-
         if (data.message) {
           Swal.fire({
             type: 'error',
@@ -396,32 +432,30 @@ export class DashboardComponent implements OnInit {
             text: 'Username or password wrong!',
           })
         } else if (data.user) {
-          let timerInterval
+          /* let timerInterval
           Swal.fire({
             title: data.user.name,
             html:
               'Getting the data, please wait <strong></strong> seconds.<br/><br/>',
-            timer: 3000,
+            timer: 2000,
             onBeforeOpen: () => {
-              const content = Swal.getContent() 
+              const content = Swal.getContent()
               const $ = content.querySelector.bind(content)
-
               Swal.showLoading()
-
               timerInterval = setInterval(() => {
                 Swal.getContent().querySelector('strong')
                   .textContent = (Swal.getTimerLeft() / 1000)
                     .toFixed(0)
               }, 100)
+              this.loadDatas(data.user);
             },
             onClose: () => {
               clearInterval(timerInterval)
             }
-          })
-          console.log("Redirigir a dashboard");
-          this.loadDatas(data.user)
+          }) */
+          this.loadDatas(data.user);          
         }
-        else{
+        else {
           Swal.fire({
             type: 'error',
             title: 'Error 500',
@@ -436,12 +470,30 @@ export class DashboardComponent implements OnInit {
   /**
    * loadDatas
    */
-  public loadDatas(data:any) {
+  public loadDatas(data: any) {
+    // Dashboard
     this.name_ = data.name;
     this.kilometers_ = data.kilometers;
     this.cars_ = data.cars;
-    // 412 cableado
-    this.emission_total_ = (data.emission_total / 412 ) * 100;    
+    this.mileage_ = data.mileage;
+    this.litros_ = data.litros;
+
+    console.log('Meses con sus datos : '+ this.mileage_);
+    
+    this.emission_total_ = this.formula(data.litros);
+  }
+
+  /**
+   * name
+   */
+  public formula(litros) {
+    let y = (litros * this.FE ) / 1000;  // Ton
+    console.log('y :' +y);
+    let z = 412 * 1000000;   //
+    console.log('z :' + z);
+    let result = (y / z) * 100;
+    console.log('r :' + result);
+    return result.toFixed(10);;
   }
 
 
@@ -452,17 +504,13 @@ export class DashboardComponent implements OnInit {
     this.http
       .post<any>('http://localhost:3000/factorEmission', json, this.httpOptions)
       .subscribe(data => {
-
-        console.log(data);
-
         if (data.message) {
           console.log("Combistible no registrado");
-          
         } else if (data.user) {
-
           this.FE = data.user.factor;
+          console.log("Factor Emisión : " + this.FE);
         }
-        else{
+        else {
           console.log("FE No encontrado");
         }
       }, error => {
@@ -473,8 +521,8 @@ export class DashboardComponent implements OnInit {
   /**
    * cal_Ton_CO2
    */
-  public cal_Ton_CO2(value_L:any) {
-      return (value_L * this.FE) / 100;   
+  public cal_Ton_CO2(value_L: any) {
+    return (value_L * this.FE) / 100;
   }
 
 

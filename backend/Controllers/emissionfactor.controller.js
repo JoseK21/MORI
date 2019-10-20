@@ -8,8 +8,8 @@ exports.getEmissionFactor = (req, res, next) => {
         namefuel: req.body.namefuel,
         factor: req.body.factor
     }
-    console.log('userData : '+userData);
-    console.log('userData : '+userData.namefuel);
+    console.log('getEmissionFactor : '+userData);
+    console.log('getEmissionFactor.namefuel : '+userData.namefuel);
     
     User.findOne({
         namefuel: userData.namefuel

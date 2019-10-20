@@ -12,7 +12,7 @@ export class TablesComponent implements OnInit {
   countries = ['Costa Rica', 'Panama', 'Italia', 'Hoduras', 'Peru'];
   listsCompany_Country = [];
 
-  public json:any;
+  public json_Countries;
 
   constructor(private service: ServiceService, private http: HttpClient) { }
 
@@ -23,7 +23,7 @@ export class TablesComponent implements OnInit {
     })
   };
 
-  ngOnInit() { 
+  ngOnInit() {
     this.get_companies();
   }
 
@@ -31,27 +31,27 @@ export class TablesComponent implements OnInit {
     // Consultar base por pais
     console.log(country);
   }
-    async get_companies() {
-      var json = '{ "namefuel" : "Regular" }';
 
-      this.http
-        .post<any>('http://localhost:3000/all', json, this.httpOptions)
-        .subscribe(data => {
 
-          console.log(data);
+  async get_companies() {
+    var json = '{ "namefuel" : "Regular" }';
 
-          if (data.message) {
-            console.log("Compañias no obtenidas");
+    this.http
+      .post<any>('http://localhost:3000/all', json, this.httpOptions)
+      .subscribe(data => {
+        if (data.message) {
+          console.log("Compañias no obtenidas");
 
-          } else if (data.user) {
-            this.json = data;
-          }
-          else {
-            console.log("Compañia no encontrada");
-          }
-        }, error => {
-          alert('error');
-        });
-    }
-
+        } else if (data.user) {
+          
+          this.json_Countries = data.user;
+        }
+        else {
+          console.log("Compañia no encontrada");
+        }
+      }, error => {
+        alert('error');
+      });
   }
+
+}
