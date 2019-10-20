@@ -2,7 +2,9 @@ const User = require('../Daos/company.dao');
 
 
 exports.getCompany = (req, res, next) => {
+    console.log("---------req body-------");    
     console.log(req.body);
+    console.log("----------------");
     
     const userData = {
         name: req.body.name,
@@ -10,8 +12,11 @@ exports.getCompany = (req, res, next) => {
         emission_week: req.body.emission_week,
         emission_total: req.body.emission_total
     }
+    console.log("--------user Data--------");
     console.log(userData);
-    
+    console.log("-------userData.name---------");
+    console.log(userData.name);
+
     User.findOne({
         name: userData.name
     }, (err, user) => {
@@ -35,7 +40,7 @@ exports.getCompany = (req, res, next) => {
                 emission_total: user.emission_total
             }
             res.send({
-                dataUser
+                /* dataUser */ user
             });
         }
     });

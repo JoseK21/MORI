@@ -16,6 +16,28 @@ export const ROUTES: RouteInfo[] = [
     class: ""
   },
   {
+    path: "#",
+    title: "Car",
+    rtlTitle: "الرموز",
+    icon: "icon-bus-front-12",
+    class: ""
+  },
+  {
+    path: "#",
+    title: "Compensation",
+    rtlTitle: "الرموز",
+    icon: "icon-money-coins",
+    class: ""
+  },
+  {
+    path: "#",
+    title: "Tips",
+    rtlTitle: "الرموز",
+    icon: "icon-bulb-63",
+    class: ""
+  }
+  /* ,
+  {
     path: "/icons",
     title: "Icons",
     rtlTitle: "الرموز",
@@ -63,7 +85,7 @@ export const ROUTES: RouteInfo[] = [
     rtlTitle: "ار تي ال",
     icon: "icon-world",
     class: ""
-  }
+  } */
 ];
 
 @Component({
