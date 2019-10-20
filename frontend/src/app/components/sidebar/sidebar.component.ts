@@ -35,7 +35,14 @@ export const ROUTES: RouteInfo[] = [
     rtlTitle: "الرموز",
     icon: "icon-bulb-63",
     class: ""
-  }
+  },
+  {
+    path: "/tables",
+    title: "National Statistics",
+    rtlTitle: "قائمة الجدول",
+    icon: "icon-paper",
+    class: ""
+  },
   /* ,
   {
     path: "/icons",

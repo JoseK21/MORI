@@ -5,11 +5,11 @@ import { Router } from "@angular/router";
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: "app-navbar",
-  templateUrl: "./navbar.component.html",
-  styleUrls: ["./navbar.component.css"]
+  selector: 'app-navbar-main',
+  templateUrl: './navbar-main.component.html',
+  styleUrls: ['./navbar-main.component.scss']
 })
-export class NavbarComponent implements OnInit, OnDestroy {
+export class NavbarMainComponent implements OnInit, OnDestroy {
   private listTitles: any[];
   location: Location;
   mobile_menu_visible: any = 0;
@@ -182,3 +182,4 @@ export class NavbarComponent implements OnInit, OnDestroy {
      window.removeEventListener("resize", this.updateColor);
   }
 }
+

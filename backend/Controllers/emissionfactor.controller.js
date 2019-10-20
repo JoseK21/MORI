@@ -15,10 +15,6 @@ exports.getEmissionFactor = (req, res, next) => {
         namefuel: userData.namefuel
     }, (err, user) => {
 
-        console.log('err : '+err);
-        
-        console.log('user : '+ user);
-
         if (err)
             return res.status(500).send('Server error!');
 
@@ -34,7 +30,8 @@ exports.getEmissionFactor = (req, res, next) => {
                 factor: user.factor
             }
             res.send({
-                dataUser
+                /* dataUser */
+                user
             });
         }
     });

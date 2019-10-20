@@ -19,11 +19,20 @@ export class DashboardComponent implements OnInit {
   public clicked1: boolean = false;
   public clicked2: boolean = false;
 
+  public name_: any = 'Default';
+  public kilometers_: any = "0";
+  public cars_: any = "0";
+  public emission_total_: any = "0";
+
+  public FE: any = "0";
+
+
   constructor(private service: ServiceService, private http: HttpClient) { }
 
   ngOnInit() {
 
     this.onSubmit();
+    this.get_factor();
     
     var gradientChartOptionsConfigurationWithTooltipBlue: any = {
       maintainAspectRatio: false,
@@ -369,9 +378,10 @@ export class DashboardComponent implements OnInit {
   };
 
 
+
   async onSubmit() {
 
-    var json = '{ "name" : "Lumaca34" }';
+    var json = '{ "name" : "Lumaca" }';
 
     this.http
       .post<any>('http://localhost:3000/company', json, this.httpOptions)
@@ -409,6 +419,7 @@ export class DashboardComponent implements OnInit {
             }
           })
           console.log("Redirigir a dashboard");
+          this.loadDatas(data.user)
         }
         else{
           Swal.fire({
@@ -421,6 +432,51 @@ export class DashboardComponent implements OnInit {
         alert('error');
       });
   }
+
+  /**
+   * loadDatas
+   */
+  public loadDatas(data:any) {
+    this.name_ = data.name;
+    this.kilometers_ = data.kilometers;
+    this.cars_ = data.cars;
+    // 412 cableado
+    this.emission_total_ = (data.emission_total / 412 ) * 100;    
+  }
+
+
+
+  async get_factor() {
+    var json = '{ "namefuel" : "Regular" }';
+
+    this.http
+      .post<any>('http://localhost:3000/factorEmission', json, this.httpOptions)
+      .subscribe(data => {
+
+        console.log(data);
+
+        if (data.message) {
+          console.log("Combistible no registrado");
+          
+        } else if (data.user) {
+
+          this.FE = data.user.factor;
+        }
+        else{
+          console.log("FE No encontrado");
+        }
+      }, error => {
+        alert('error');
+      });
+  }
+
+  /**
+   * cal_Ton_CO2
+   */
+  public cal_Ton_CO2(value_L:any) {
+      return (value_L * this.FE) / 100;   
+  }
+
 
 
   public updateOptions() {
